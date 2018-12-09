@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pl"
+    xmlns="http://www.thymeleaf.org/extras/dialect" 
+    xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta th:replace="components/common-head" />
+    <title>USER page</title>
+</head>
+<body>
+    <nav th:replace="components/navbar::navbar('user')"></nav>
+    <h1 th:text="#{home.welcome}">USER page</h1>
+    <p>USER USER USER</p>
+    Authenticated username:
+    <div sec:authentication="name"></div>
+    <a th:href="@{/}">Go back to homepage</a>
+</body>
+</html>

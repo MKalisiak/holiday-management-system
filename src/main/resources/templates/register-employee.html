@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl"
+    xmlns="http://www.thymeleaf.org/extras/dialect" 
+    xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+</head>
+<body>
+    <form action="@{/register}" method="post">
+        <input type="text" name="firstname">
+        <input type="text" name="lastname">
+        <input type="email" name="email">
+        <input type="password" name="password">
+    </form>
+    <a th:href="@{/}">Go to homepage</a>
+    <form th:action="@{/logout}" method="POST">
+        <input type="submit" th:value="#{home.logout-label}">
+    </form>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pl"
+    xmlns="http://www.thymeleaf.org/extras/dialect" 
+    xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta th:replace="components/common-head" />
+    <title>Not found page</title>
+</head>
+<body>
+    <nav th:replace="components/navbar::navbar (null)"></nav>
+    <p>Sorry but the resource you requested could not be found</p>
+    <a th:href="@{/}">Go back to homepage</a>
+</body>
+</html>

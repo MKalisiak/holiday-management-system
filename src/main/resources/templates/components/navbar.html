@@ -1,0 +1,14 @@
+<nav th:fragment="navbar (active)">
+    <div class="nav-wrapper">
+        <ul class="left hide-on-med-and-down">
+            <li th:classappend="${active == 'home'} ? active : ''"><a th:href="@{/}">Home</a></li>
+            <li sec:authorize="hasRole('EMPLOYEE')" th:classappend="${active == 'user'} ? active : ''"><a th:href="@{/user}">User</a></li>
+            <li sec:authorize="hasRole('HR')" th:classappend="${active == 'admin'} ? active : ''"><a th:href="@{/admin}">Admin</a></li>
+        </ul>
+
+        <ul sec:authorize="isAuthenticated()" class="right hide-on-med-and-down">
+            <li th:classappend="${active == 'profile'} ? active : ''"><a th:href="@{/profile}" sec:authentication="name"></a></li>
+        </ul>
+
+    </div>
+</nav>

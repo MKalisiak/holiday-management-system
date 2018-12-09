@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl"
+    xmlns="http://www.thymeleaf.org/extras/dialect" 
+    xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta th:replace="components/common-head" />
+    <title>Home</title>
+</head>
+<body>
+    <nav th:replace="components/navbar::navbar('home')"></nav>
+    <h1 th:text="#{home.welcome}">Home page</h1>
+    <p>Welcome to home page</p>
+    Authenticated username:
+    <div sec:authentication="name"></div>
+    Authenticated user roles:
+        <div sec:authentication="principal.authorities"></div>
+    <a th:href="@{/admin}">Go to admin panel</a>
+    <form th:action="@{/logout}" method="POST">
+        <input type="submit" th:value="#{home.logout-label}">
+    </form>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pl"
+    xmlns="http://www.thymeleaf.org/extras/dialect" 
+    xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta th:replace="components/common-head" />
+    <title>Profile page</title>
+</head>
+<body>
+    <nav th:replace="components/navbar::navbar('profile')"></nav>
+    <div>
+        <p th:text="${user.firstname}"></p>
+        <p th:text="${user.lastname}"></p>
+        <p th:text="${user.email}"></p>
+        <p th:text="${user.roles}"></p>
+        <p th:text="${user.education}"></p>
+        <p th:text="${user.workExperience}"></p>
+    </div>
+</body>
+</html>

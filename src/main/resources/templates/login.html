@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+</head>
+<body>
+    <form th:action="@{/authenticateTheUser}" method="POST">
+        <div class="errors" th:if="${param.error != null}" th:text="#{login.error}"></div>
+        <div class="logged-out" th:if="${param.logout != null}" th:text="#{login.logged-out}"></div>
+        <input type="text" name="username" th:placeholder="#{login.username-placeholder}">
+        <input type="password" name="password" th:placeholder="#{login.password-placeholder}">
+        <input type="submit" th:value="#{login.submit-label}">
+    </form>
+</body>
+</html>
