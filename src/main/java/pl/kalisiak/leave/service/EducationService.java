@@ -8,7 +8,7 @@ import pl.kalisiak.leave.model.Education;
 import pl.kalisiak.leave.repository.EducationRepository;
 
 @Service
-public class EducationService extends GenericService<Education> {
+public class EducationService {
 
     @Autowired
     private EducationRepository repository;

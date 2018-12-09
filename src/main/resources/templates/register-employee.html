@@ -1,23 +1,83 @@
 <!DOCTYPE html>
-<html lang="pl"
-    xmlns="http://www.thymeleaf.org/extras/dialect" 
-    xmlns:th="http://www.thymeleaf.org" 
-    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="pl" xmlns="http://www.thymeleaf.org/extras/dialect" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home</title>
+    <meta th:replace="components/common-head" />
+    <title>Register</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems);
+        });
+    </script>
 </head>
+
 <body>
-    <form action="@{/register}" method="post">
-        <input type="text" name="firstname">
-        <input type="text" name="lastname">
-        <input type="email" name="email">
-        <input type="password" name="password">
-    </form>
-    <a th:href="@{/}">Go to homepage</a>
-    <form th:action="@{/logout}" method="POST">
-        <input type="submit" th:value="#{home.logout-label}">
-    </form>
+    <nav th:replace="components/navbar::navbar('register')"></nav>
+    <div class="row">
+        <div class="container">
+            <form class="col s12" th:action="@{/register}" method="post">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input id="first_name" type="text" name="firstname" class="validate">
+                        <label for="first_name" th:text="#{register.firstname}"></label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="last_name" type="text" name="lastname" class="validate">
+                        <label for="last_name" th:text="#{register.lastname}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="password" type="password" name="password" class="validate">
+                        <label for="password" th:text="#{register.password}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="email" type="email" name="email" class="validate">
+                        <label for="email" th:text="#{register.email}"></label>
+                    </div>
+                </div>
+                <div class="input-field col s12">
+                    <select name="role">
+                        <option value="" disabled selected th:text="#{register.role}"></option>
+                        <option value="EMPLOYEE" th:text="#{role.employee}"></option>
+                        <option value="HR" th:text="#{role.hr}"></option>
+                        <option value="MANAGEMENT" th:text="#{role.management}"></option>
+                        <option value="CEO" th:text="#{role.ceo}"></option>
+                    </select>
+                    <label th:text="#{register.role}">Materialize Select</label>
+                </div>
+                <div class="input-field col s12">
+                    <select name="department">
+                        <option value="" disabled selected th:text="#{register.department}"></option>
+                        <option value="IT" th:text="#{department.it}"></option>
+                        <option value="HR" th:text="#{department.hr}"></option>
+                        <option value="SALES" th:text="#{department.sales}"></option>
+                        <option value="ADMINISTRATION" th:text="#{department.administration}"></option>
+                        <option value="PRODUCTION" th:text="#{department.production}"></option>
+                    </select>
+                    <label th:text="#{register.department}"></label>
+                </div>
+                <div class="input-field col s12">
+                    <select name="supervisorId">
+                        <option value="" disabled selected th:text="#{register.supervisor}"></option>
+                        <option th:each="supervisor : ${potentialSupervisors}" th:value="${supervisor.id}" th:text="${supervisor.email + ' (' + supervisor.firstname + ' ' + supervisor.lastname + ')'}"></option>
+                    </select>
+                    <label th:text="#{register.supervisor}"></label>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <button class="btn waves-effect waves-light" type="submit">
+                            <span th:text="#{register.submit}"></span>
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

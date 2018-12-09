@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
 import pl.kalisiak.leave.model.WorkExperience;
+import pl.kalisiak.leave.repository.WorkExperienceRepository;
 
 @Service
-public class WorkExperienceService extends GenericService<WorkExperience> {
+public class WorkExperienceService {
+
+    @Autowired
+    WorkExperienceRepository repository;
 
     public static Set<WorkExperience> dtoToModelAll(Set<WorkExperienceDTO> experiencesDTO) {
         if (experiencesDTO == null)

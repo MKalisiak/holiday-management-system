@@ -27,7 +27,7 @@ import pl.kalisiak.leave.model.Role;
 import pl.kalisiak.leave.repository.EmployeeRepository;
 
 @Service
-public class EmployeeService extends GenericService<Employee> implements UserDetailsService {
+public class EmployeeService implements UserDetailsService {
 
     @Autowired
     private EmployeeRepository repository;

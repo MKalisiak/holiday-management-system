@@ -84,7 +84,7 @@ public class LeaveApplication implements ApplicationRunner {
 		seba.setLastname("druć");
 		seba.setEmail("S.Druc@pwpw.pl");
 		seba.setPassword("test");
-		seba.setRole(Role.EMPLOYEE);
+		seba.setRole(Role.HR);
 		seba.setDepartment(Department.IT);
 		seba.setSupervisorId(service.findByEmail("G.Sowa@pwpw.pl").getId());
 
