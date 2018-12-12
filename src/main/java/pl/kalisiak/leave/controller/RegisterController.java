@@ -31,14 +31,17 @@ public class RegisterController {
 
 	@PostMapping("/register")
 	public String registerEmployee(HttpServletRequest request, EmployeeRegistrationDTO registrationDTO) {
+		EmployeeDTO employeeDTO;
 		try {
-			employeeService.register(registrationDTO);
+			employeeDTO = employeeService.register(registrationDTO);
 		} catch (EmailAlreadyTakenException e) {
 			request.setAttribute("emailTaken", true);
+			return "register-employee";
 		} catch (SupervisorMissingException e) {
 			request.setAttribute("supervisorMissing", true);
+			return "register-employee";
 		}
-		return "register-employee";
+		return "redirect:/profile/" + employeeDTO.getId();
 	}
 	
 }

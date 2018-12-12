@@ -8,6 +8,9 @@
 
         <ul sec:authorize="isAuthenticated()" class="right hide-on-med-and-down">
             <li th:classappend="${active == 'profile'} ? active : ''"><a th:href="@{/profile}" sec:authentication="name"></a></li>
+            <li><form id="logout-form" th:action="@{/logout}" method="POST">
+                <a onclick="document.getElementById('logout-form').submit();" th:text="#{home.logout-label}"></a>
+            </form></li>
         </ul>
 
     </div>

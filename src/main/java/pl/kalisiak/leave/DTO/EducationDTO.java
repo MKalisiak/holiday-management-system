@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -18,16 +21,17 @@ public class EducationDTO extends GenericDTO {
 	private String schoolName;
 	
 	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate startDate;
 	
 	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate finishDate;
     
     @NotNull
 	private EducationLevel level;
 
 	@NotNull
-	@ToString.Exclude
-	private EmployeeDTO employee;
+	private Long employeeId;
 	
 }

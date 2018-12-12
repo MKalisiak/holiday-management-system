@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
+import pl.kalisiak.leave.DTO.WorkExperienceDTO;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
 import pl.kalisiak.leave.exceptions.SupervisorMissingException;
 import pl.kalisiak.leave.model.Department;
@@ -22,6 +23,7 @@ import pl.kalisiak.leave.model.Role;
 import pl.kalisiak.leave.model.WorkExperience;
 import pl.kalisiak.leave.repository.EmployeeRepository;
 import pl.kalisiak.leave.service.EmployeeService;
+import pl.kalisiak.leave.service.WorkExperienceService;
 
 @SpringBootApplication
 public class LeaveApplication implements ApplicationRunner {
@@ -34,6 +36,9 @@ public class LeaveApplication implements ApplicationRunner {
 
 	@Autowired
 	EmployeeService service;
+
+	@Autowired
+	WorkExperienceService workExperienceService;
 
 	@Autowired
 	EmployeeRepository repo;
@@ -75,6 +80,9 @@ public class LeaveApplication implements ApplicationRunner {
 		grzesiekE.addWorkExperience(experience);
 		grzesiekE.setEducation(education);
 
+		logger.info(experience.toString());
+		logger.info(grzesiekE.toString());
+
 		repo.save(grzesiekE);
 		
 		logger.info(grzesiekE.toString());
@@ -108,5 +116,31 @@ public class LeaveApplication implements ApplicationRunner {
 		logger.info(supervisedByGrzesiek.toString());
 		Set<EmployeeDTO> supervisedBySeba = service.findAllBySupervisorId(sebaE.getId());
 		logger.info(supervisedBySeba.toString());
+
+		WorkExperience experience2 = new WorkExperience();
+		experience2.setCompanyName("firma");
+		experience2.setStartDate(LocalDate.of(2018, 12, 1));
+		experience2.setFinishDate(LocalDate.now());
+
+		grzesiekE = repo.findByEmail("G.Sowa@pwpw.pl").orElse(null);
+		grzesiekE.addWorkExperience(experience2);
+
+		grzesiekE = repo.save(grzesiekE);
+
+		logger.info(grzesiekE.toString());
+
+		WorkExperienceDTO exDTO = new WorkExperienceDTO();
+		exDTO.setCompanyName("polska wytwornia poapierow wartosciowych");
+		exDTO.setStartDate(LocalDate.of(2018, 12, 1));
+		exDTO.setFinishDate(LocalDate.of(2018, 12, 31));
+		exDTO.setEmployeeId(new Long(1));
+		WorkExperience experience3 = workExperienceService.dtoToModel(exDTO);
+
+		grzesiekE = repo.findById(experience3.getEmployee().getId()).orElse(null);
+		grzesiekE.addWorkExperience(experience3);
+
+		grzesiekE = repo.save(grzesiekE);
+
+		logger.info(grzesiekE.toString());
 	}
 }

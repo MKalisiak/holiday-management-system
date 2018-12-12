@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.thymeleaf.org/extras/dialect" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta th:replace="components/common-head" />
+    <title>Register</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems);
+        });
+    </script>
+</head>
+
+<body>
+    <nav th:replace="components/navbar::navbar(null)"></nav>
+    <div class="row">
+        <div class="container">
+            <h1 th:text="#{profile.add-education.title(${user.email})}"></h1>
+            <form class="col s12" th:action="@{__${#httpServletRequest.requestURI}__}" method="post">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="school_name" type="text" name="schoolName" class="validate">
+                        <label for="school_name" th:text="#{profile.add-education.school-name}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="start_date" type="date" name="startDate" class="validate">
+                        <label for="start_date" th:text="#{profile.add-education.start-date}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="finish_date" type="date" name="finishDate" class="validate">
+                        <label for="finish_date" th:text="#{profile.add-education.finish-date}"></label>
+                    </div>
+                </div>
+                <div class="input-field col s12">
+                    <select name="level">
+                        <option value="" disabled selected th:text="#{profile.add-education.level.default-select}"></option>
+                        <option value="BASIC_VOCATIONAL" th:text="#{profile.add-education.level.basic-vocational}"></option>
+                        <option value="VOCATIONAL_SECONDARY" th:text="#{profile.add-education.level.vocational-secondary}"></option>
+                        <option value="GENERAL_SECONDARY" th:text="#{profile.add-education.level.general-secondary}"></option>
+                        <option value="POST_SECONDARY" th:text="#{profile.add-education.level.post-secondary}"></option>
+                        <option value="UNIVERSITY" th:text="#{profile.add-education.level.univeristy}"></option>
+                    </select>
+                    <label th:text="#{profile.add-education.level}"></label>
+                </div>
+                <input type="hidden" name="employeeId" th:value="${user.id}" />
+                <div class="row">
+                    <div class="input-field col s12">
+                        <button class="btn waves-effect waves-light" type="submit">
+                            <span th:text="#{profile.add-education.submit}"></span>
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

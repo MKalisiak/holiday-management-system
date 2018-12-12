@@ -1,7 +1,10 @@
 package pl.kalisiak.leave.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -49,7 +52,7 @@ public class Employee extends GenericModel {
     @Column(name = "role")
 	private Set<Role> roles;
 
-	@OneToOne(mappedBy = "employee")
+	@OneToOne(mappedBy = "employee", orphanRemoval = true)
 	@Cascade(CascadeType.ALL)
 	@EqualsAndHashCode.Exclude
 	private Education education;
@@ -69,6 +72,8 @@ public class Employee extends GenericModel {
 	private Employee supervisor;
 
 	public void setEducation(Education education) {
+		if (this.education != null)
+			this.education.setEmployee(null);
 		if (education != null)
 			education.setEmployee(this);
 		this.education = education;

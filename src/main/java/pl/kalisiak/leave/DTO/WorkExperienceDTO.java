@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,13 +19,14 @@ public class WorkExperienceDTO extends GenericDTO {
 	private String companyName;
 	
 	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate startDate;
 	
 	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate finishDate;
 
 	@NotNull
-	@ToString.Exclude
-	private EmployeeDTO employee;
+	private Long employeeId;
 	
 }

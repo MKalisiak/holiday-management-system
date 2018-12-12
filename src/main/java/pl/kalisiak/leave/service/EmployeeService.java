@@ -17,14 +17,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import pl.kalisiak.leave.DTO.EducationDTO;
 import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
+import pl.kalisiak.leave.DTO.WorkExperienceDTO;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
 import pl.kalisiak.leave.exceptions.NoSuchEmployeeException;
 import pl.kalisiak.leave.exceptions.SupervisorMissingException;
+import pl.kalisiak.leave.model.Education;
 import pl.kalisiak.leave.model.Employee;
 import pl.kalisiak.leave.model.Role;
+import pl.kalisiak.leave.model.WorkExperience;
 import pl.kalisiak.leave.repository.EmployeeRepository;
+import pl.kalisiak.leave.repository.WorkExperienceRepository;
 
 @Service
 public class EmployeeService implements UserDetailsService {
@@ -33,7 +38,23 @@ public class EmployeeService implements UserDetailsService {
     private EmployeeRepository repository;
 
     @Autowired
+    private WorkExperienceRepository experienceRepository;
+
+    @Autowired
+    private EducationService educationService;
+
+    @Autowired
+    private WorkExperienceService workExperienceService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public EmployeeDTO findById(Long id) throws NoSuchEmployeeException {
+        Employee employee = repository.findById(id).orElse(null);
+        if (employee == null)
+            throw new NoSuchEmployeeException("No employee with given id");
+        return modelToDTO(employee);
+    }
 
     public EmployeeDTO findByEmail(String email) throws NoSuchEmployeeException {
         Employee employee = repository.findByEmail(email).orElse(null);
@@ -66,6 +87,28 @@ public class EmployeeService implements UserDetailsService {
         return modelToDTO(employee);
     }
 
+    @Transactional
+    public EmployeeDTO addEducationToEmployee(EmployeeDTO employeeDTO, EducationDTO educationDTO) throws NoSuchEmployeeException {
+        Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
+        if (employee == null) 
+            throw new NoSuchEmployeeException("No employee with given id");
+        Education education = educationService.dtoToModel(educationDTO);
+        employee.setEducation(education);
+        employee = repository.save(employee);
+        return modelToDTO(employee);
+    }
+
+    @Transactional
+    public EmployeeDTO addExperienceToEmployee(EmployeeDTO employeeDTO, WorkExperienceDTO experienceDTO) throws NoSuchEmployeeException {
+        Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
+        if (employee == null) 
+            throw new NoSuchEmployeeException("No employee with given id");
+        WorkExperience experience = workExperienceService.dtoToModel(experienceDTO);
+        employee.addWorkExperience(experience);
+        employee = repository.save(employee);
+        return modelToDTO(employee);
+    }
+
     public Employee registrationDTOToModel(EmployeeRegistrationDTO registrationDTO) {
         Employee employee = new Employee();
         employee.setFirstname(registrationDTO.getFirstname());
@@ -88,8 +131,8 @@ public class EmployeeService implements UserDetailsService {
         employee.setLastname(employeeDTO.getLastname());
         employee.setEmail(employeeDTO.getEmail());
         employee.setRoles(employeeDTO.getRoles());
-        employee.setEducation(EducationService.dtoToModel(employeeDTO.getEducation()));
-        employee.setWorkExperience(WorkExperienceService.dtoToModelAll(employeeDTO.getWorkExperience()));
+        employee.setEducation(educationService.dtoToModel(employeeDTO.getEducation()));
+        employee.setWorkExperience(workExperienceService.dtoToModelAll(employeeDTO.getWorkExperience()));
         employee.setDepartment(employeeDTO.getDepartment());
         employee.setSupervisor(repository.findById(employeeDTO.getSupervisorId()).orElse(null));
         return employee;
@@ -104,8 +147,8 @@ public class EmployeeService implements UserDetailsService {
         employeeDTO.setLastname(employee.getLastname());
         employeeDTO.setEmail(employee.getEmail());
         employeeDTO.setRoles(employee.getRoles());
-        employeeDTO.setEducation(EducationService.modelToDTO(employee.getEducation()));
-        employeeDTO.setWorkExperience(WorkExperienceService.modelToDTOAll(employee.getWorkExperience()));
+        employeeDTO.setEducation(educationService.modelToDTO(employee.getEducation()));
+        employeeDTO.setWorkExperience(workExperienceService.modelToDTOAll(employee.getWorkExperience()));
         employeeDTO.setDepartment(employee.getDepartment());
         employeeDTO.setSupervisorId(employee.getSupervisor() == null ? null : employee.getSupervisor().getId());
         return employeeDTO;

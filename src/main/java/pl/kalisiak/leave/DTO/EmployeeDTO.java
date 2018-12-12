@@ -1,6 +1,8 @@
 package pl.kalisiak.leave.DTO;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -41,7 +43,7 @@ public class EmployeeDTO extends GenericDTO {
 	
 	public void setEducation(EducationDTO education) {
 		if (education != null) 
-			education.setEmployee(this);
+			education.setEmployeeId(this.id);
 		this.education = education;
 	}
 
@@ -50,14 +52,14 @@ public class EmployeeDTO extends GenericDTO {
 			return;
 		if (this.workExperience == null)
 			this.workExperience = new HashSet<>();
-		experience.setEmployee(this);
+		experience.setEmployeeId(this.id);
 		this.workExperience.add(experience);
 	}
 
 	public void removeWorkExperience(WorkExperienceDTO experience) {
 		if (experience == null)
 			return;
-		experience.setEmployee(null);
+		experience.setEmployeeId(null);
 		this.workExperience.remove(experience);
 	}
 	

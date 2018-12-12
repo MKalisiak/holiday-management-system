@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.thymeleaf.org/extras/dialect" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta th:replace="components/common-head" />
+    <title>Register</title>
+</head>
+
+<body>
+    <nav th:replace="components/navbar::navbar(null)"></nav>
+    <div class="row">
+        <div class="container">
+            <h1 th:text="#{profile.add-experience.title(${user.email})}"></h1>
+            <form class="col s12" th:action="@{__${#httpServletRequest.requestURI}__}" method="post">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="company_name" type="text" name="companyName" class="validate">
+                        <label for="company_name" th:text="#{profile.add-experience.company-name}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="start_date" type="date" name="startDate" class="validate">
+                        <label for="start_date" th:text="#{profile.add-experience.start-date}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="finish_date" type="date" name="finishDate" class="validate">
+                        <label for="finish_date" th:text="#{profile.add-experience.finish-date}"></label>
+                    </div>
+                </div>
+                <input type="hidden" name="employeeId" th:value="${user.id}" />
+                <div class="row">
+                    <div class="input-field col s12">
+                        <button class="btn waves-effect waves-light" type="submit">
+                            <span th:text="#{profile.add-experience.submit}"></span>
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

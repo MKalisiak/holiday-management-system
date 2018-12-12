@@ -1,6 +1,7 @@
 package pl.kalisiak.leave.model;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
