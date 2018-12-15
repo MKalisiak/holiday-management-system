@@ -1,7 +1,6 @@
 package pl.kalisiak.leave.model;
 
 import java.time.LocalDate;
-import java.util.Random;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -35,5 +34,5 @@ public class WorkExperience extends GenericModel {
 	@NotNull
 	@ToString.Exclude
 	private Employee employee;
-	
+
 }

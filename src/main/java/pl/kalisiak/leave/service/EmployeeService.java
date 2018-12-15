@@ -22,6 +22,7 @@ import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
+import pl.kalisiak.leave.exceptions.FinishBeforeStartException;
 import pl.kalisiak.leave.exceptions.NoSuchEmployeeException;
 import pl.kalisiak.leave.exceptions.SupervisorMissingException;
 import pl.kalisiak.leave.model.Education;
@@ -88,7 +89,9 @@ public class EmployeeService implements UserDetailsService {
     }
 
     @Transactional
-    public EmployeeDTO addEducationToEmployee(EmployeeDTO employeeDTO, EducationDTO educationDTO) throws NoSuchEmployeeException {
+    public EmployeeDTO addEducationToEmployee(EmployeeDTO employeeDTO, EducationDTO educationDTO) throws NoSuchEmployeeException, FinishBeforeStartException {
+        if (educationDTO.getFinishDate().isBefore(educationDTO.getStartDate()))
+            throw new FinishBeforeStartException("Finish date cannot be before start date");
         Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
         if (employee == null) 
             throw new NoSuchEmployeeException("No employee with given id");
@@ -99,7 +102,9 @@ public class EmployeeService implements UserDetailsService {
     }
 
     @Transactional
-    public EmployeeDTO addExperienceToEmployee(EmployeeDTO employeeDTO, WorkExperienceDTO experienceDTO) throws NoSuchEmployeeException {
+    public EmployeeDTO addExperienceToEmployee(EmployeeDTO employeeDTO, WorkExperienceDTO experienceDTO) throws NoSuchEmployeeException, FinishBeforeStartException {
+        if (experienceDTO.getFinishDate().isBefore(experienceDTO.getStartDate()))
+            throw new FinishBeforeStartException("Finish date cannot be before start date");
         Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
         if (employee == null) 
             throw new NoSuchEmployeeException("No employee with given id");

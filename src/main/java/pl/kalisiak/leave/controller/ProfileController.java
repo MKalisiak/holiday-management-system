@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import pl.kalisiak.leave.DTO.EducationDTO;
 import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
+import pl.kalisiak.leave.exceptions.FinishBeforeStartException;
 import pl.kalisiak.leave.exceptions.NoSuchEmployeeException;
 import pl.kalisiak.leave.service.EmployeeService;
 
@@ -75,7 +76,7 @@ public class ProfileController {
 
 	@PostMapping({ "/profile/add-education", "/profile/{userId}/add-education"})
 	public String addEducation(@PathVariable Optional<Long> userId, HttpServletRequest request, EducationDTO educationDTO) {
-		EmployeeDTO employeeDTO;
+		EmployeeDTO employeeDTO = null;
 		try {
 			if (userId.isPresent()) {
 				employeeDTO = employeeService.findById(userId.get());
@@ -86,6 +87,10 @@ public class ProfileController {
 			employeeDTO = employeeService.addEducationToEmployee(employeeDTO, educationDTO);
 		} catch (NoSuchEmployeeException e) {
 			return "404";
+		}catch (FinishBeforeStartException e) {
+			request.setAttribute("dateOrderError", true);
+			request.setAttribute("user", employeeDTO);
+			return "add-education";
 		}
 		
 		request.setAttribute("user", employeeDTO);
@@ -94,7 +99,7 @@ public class ProfileController {
 
 	@PostMapping({ "/profile/add-experience", "/profile/{userId}/add-experience"})
 	public String addExperience(@PathVariable Optional<Long> userId, HttpServletRequest request, WorkExperienceDTO experienceDTO) {
-		EmployeeDTO employeeDTO;
+		EmployeeDTO employeeDTO = null;
 		try {
 			if (userId.isPresent()) {
 				employeeDTO = employeeService.findById(userId.get());
@@ -105,6 +110,10 @@ public class ProfileController {
 			employeeDTO = employeeService.addExperienceToEmployee(employeeDTO, experienceDTO);
 		} catch (NoSuchEmployeeException e) {
 			return "404";
+		} catch (FinishBeforeStartException e) {
+			request.setAttribute("dateOrderError", true);
+			request.setAttribute("user", employeeDTO);
+			return "add-experience";
 		}
 		
 		request.setAttribute("user", employeeDTO);

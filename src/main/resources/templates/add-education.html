@@ -25,6 +25,7 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div th:if="${dateOrderError}" th:text="#{profile.add-education.error.date-order}"></div>
                     <div class="input-field col s12">
                         <input id="start_date" type="date" name="startDate" class="validate">
                         <label for="start_date" th:text="#{profile.add-education.start-date}"></label>

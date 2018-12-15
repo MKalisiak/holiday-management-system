@@ -16,6 +16,7 @@
     <nav th:replace="components/navbar::navbar('register')"></nav>
     <div class="row">
         <div class="container">
+            <h1 th:text="#{register.title}"></h1>
             <form class="col s12" th:action="@{/register}" method="post">
                 <div class="row">
                     <div class="input-field col s6">
