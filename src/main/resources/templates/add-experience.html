@@ -14,20 +14,20 @@
             <form class="col s12" th:action="@{__${#httpServletRequest.requestURI}__}" method="post">
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="company_name" type="text" name="companyName" class="validate">
+                        <input id="company_name" type="text" name="companyName" class="validate" required>
                         <label for="company_name" th:text="#{profile.add-experience.company-name}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div th:if="${dateOrderError}" th:text="#{profile.add-experience.error.date-order}"></div>
                     <div class="input-field col s12">
-                        <input id="start_date" type="date" name="startDate" class="validate">
+                        <input id="start_date" type="date" name="startDate" class="validate" required>
                         <label for="start_date" th:text="#{profile.add-experience.start-date}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="finish_date" type="date" name="finishDate" class="validate">
+                        <input id="finish_date" type="date" name="finishDate" class="validate" required>
                         <label for="finish_date" th:text="#{profile.add-experience.finish-date}"></label>
                     </div>
                 </div>

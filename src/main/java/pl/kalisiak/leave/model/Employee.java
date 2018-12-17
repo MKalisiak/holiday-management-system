@@ -1,5 +1,6 @@
 package pl.kalisiak.leave.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -70,6 +71,11 @@ public class Employee extends GenericModel {
 	@ManyToOne
 	@JoinColumn(name = "supervisor_id")
 	private Employee supervisor;
+
+	@NotNull
+	private LocalDate employmentStartDate;
+
+	private LocalDate employmentFinishDate;
 
 	public void setEducation(Education education) {
 		if (this.education != null)

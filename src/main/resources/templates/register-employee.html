@@ -20,28 +20,28 @@
             <form class="col s12" th:action="@{/register}" method="post">
                 <div class="row">
                     <div class="input-field col s6">
-                        <input id="first_name" type="text" name="firstname" class="validate">
+                        <input id="first_name" type="text" name="firstname" class="validate" required>
                         <label for="first_name" th:text="#{register.firstname}"></label>
                     </div>
                     <div class="input-field col s6">
-                        <input id="last_name" type="text" name="lastname" class="validate">
+                        <input id="last_name" type="text" name="lastname" class="validate" required>
                         <label for="last_name" th:text="#{register.lastname}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="password" type="password" name="password" class="validate">
+                        <input id="password" type="password" name="password" class="validate" required>
                         <label for="password" th:text="#{register.password}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="email" type="email" name="email" class="validate">
+                        <input id="email" type="email" name="email" class="validate" required>
                         <label for="email" th:text="#{register.email}"></label>
                     </div>
                 </div>
                 <div class="input-field col s12">
-                    <select name="role">
+                    <select name="role" required>
                         <option value="" disabled selected th:text="#{register.role}"></option>
                         <option value="EMPLOYEE" th:text="#{role.employee}"></option>
                         <option value="HR" th:text="#{role.hr}"></option>
@@ -51,7 +51,7 @@
                     <label th:text="#{register.role}"></label>
                 </div>
                 <div class="input-field col s12">
-                    <select name="department">
+                    <select name="department" required>
                         <option value="" disabled selected th:text="#{register.department}"></option>
                         <option value="IT" th:text="#{department.it}"></option>
                         <option value="HR" th:text="#{department.hr}"></option>
@@ -62,11 +62,24 @@
                     <label th:text="#{register.department}"></label>
                 </div>
                 <div class="input-field col s12">
-                    <select name="supervisorId">
+                    <select name="supervisorId" required>
                         <option value="" disabled selected th:text="#{register.supervisor}"></option>
                         <option th:each="supervisor : ${potentialSupervisors}" th:value="${supervisor.id}" th:text="${supervisor.email + ' (' + supervisor.firstname + ' ' + supervisor.lastname + ')'}"></option>
                     </select>
                     <label th:text="#{register.supervisor}"></label>
+                </div>
+                <div class="row">
+                    <div th:if="${dateOrderError}" th:text="#{register.error.date-order}"></div>
+                    <div class="input-field col s12">
+                        <input id="start_date" type="date" name="employmentStartDate" class="validate" required>
+                        <label for="start_date" th:text="#{register.start-date}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="finish_date" type="date" name="employmentFinishDate" class="validate">
+                        <label for="finish_date" th:text="#{register.finish-date}"></label>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">

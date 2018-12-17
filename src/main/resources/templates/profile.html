@@ -16,6 +16,10 @@
         <p th:text="${user.roles}"></p>
         <p th:text="${user.education}"></p>
         <p th:text="${user.workExperience}"></p>
+        <p th:text="${user.department}"></p>
+        <p th:text="${user.supervisorId}"></p>
+        <p th:text="${user.employmentStartDate}"></p>
+        <p th:text="${user.employmentFinishDate}"></p>
     </div>
     <div sec:authorize="hasRole('HR')">
         <a th:href="@{__${#httpServletRequest.requestURI}__/add-education}" th:text="#{profile.add-education}"></a>

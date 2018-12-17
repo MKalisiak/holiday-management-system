@@ -1,13 +1,15 @@
 package pl.kalisiak.leave.DTO;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,6 +42,13 @@ public class EmployeeDTO extends GenericDTO {
 	private Department department;
 
 	private Long supervisorId;
+
+	@NotNull
+	@DateTimeFormat(iso = ISO.DATE)
+	private LocalDate employmentStartDate;
+
+	@DateTimeFormat(iso = ISO.DATE)
+	private LocalDate employmentFinishDate;
 	
 	public void setEducation(EducationDTO education) {
 		if (education != null) 

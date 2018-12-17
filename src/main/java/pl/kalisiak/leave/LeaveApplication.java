@@ -1,6 +1,7 @@
 package pl.kalisiak.leave;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.logging.Logger;
 import java.util.Set;
 
@@ -52,6 +53,7 @@ public class LeaveApplication implements ApplicationRunner {
 		grzesiek.setPassword("test");
 		grzesiek.setRole(Role.CEO);
 		grzesiek.setDepartment(Department.ADMINISTRATION);
+		grzesiek.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
 
 		try {
 			service.register(grzesiek);
@@ -95,6 +97,8 @@ public class LeaveApplication implements ApplicationRunner {
 		seba.setRole(Role.HR);
 		seba.setDepartment(Department.IT);
 		seba.setSupervisorId(service.findByEmail("G.Sowa@pwpw.pl").getId());
+		seba.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
+		seba.setEmploymentFinishDate(LocalDate.of(2019, Month.JULY, 16));
 
 		try {
 			service.register(seba);

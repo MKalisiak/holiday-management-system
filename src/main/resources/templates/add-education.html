@@ -20,25 +20,25 @@
             <form class="col s12" th:action="@{__${#httpServletRequest.requestURI}__}" method="post">
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="school_name" type="text" name="schoolName" class="validate">
+                        <input id="school_name" type="text" name="schoolName" class="validate" required>
                         <label for="school_name" th:text="#{profile.add-education.school-name}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div th:if="${dateOrderError}" th:text="#{profile.add-education.error.date-order}"></div>
                     <div class="input-field col s12">
-                        <input id="start_date" type="date" name="startDate" class="validate">
+                        <input id="start_date" type="date" name="startDate" class="validate" required>
                         <label for="start_date" th:text="#{profile.add-education.start-date}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="finish_date" type="date" name="finishDate" class="validate">
+                        <input id="finish_date" type="date" name="finishDate" class="validate" required>
                         <label for="finish_date" th:text="#{profile.add-education.finish-date}"></label>
                     </div>
                 </div>
                 <div class="input-field col s12">
-                    <select name="level">
+                    <select name="level" required>
                         <option value="" disabled selected th:text="#{profile.add-education.level.default-select}"></option>
                         <option value="BASIC_VOCATIONAL" th:text="#{profile.add-education.level.basic-vocational}"></option>
                         <option value="VOCATIONAL_SECONDARY" th:text="#{profile.add-education.level.vocational-secondary}"></option>

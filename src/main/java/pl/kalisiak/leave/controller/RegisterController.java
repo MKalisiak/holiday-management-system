@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
+import pl.kalisiak.leave.exceptions.FinishBeforeStartException;
 import pl.kalisiak.leave.exceptions.SupervisorMissingException;
 import pl.kalisiak.leave.service.EmployeeService;
 
@@ -39,6 +40,9 @@ public class RegisterController {
 			return "register-employee";
 		} catch (SupervisorMissingException e) {
 			request.setAttribute("supervisorMissing", true);
+			return "register-employee";
+		} catch (FinishBeforeStartException e) {
+			request.setAttribute("dateOrderError", true);
 			return "register-employee";
 		}
 		return "redirect:/profile/" + employeeDTO.getId();

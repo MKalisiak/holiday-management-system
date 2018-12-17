@@ -76,7 +76,9 @@ public class EmployeeService implements UserDetailsService {
     }
 
     @Transactional
-    public EmployeeDTO register(EmployeeRegistrationDTO newEmployeeDTO) throws EmailAlreadyTakenException, SupervisorMissingException {
+    public EmployeeDTO register(EmployeeRegistrationDTO newEmployeeDTO) throws EmailAlreadyTakenException, SupervisorMissingException, FinishBeforeStartException {
+        if (newEmployeeDTO.getEmploymentFinishDate() != null && newEmployeeDTO.getEmploymentFinishDate().isBefore(newEmployeeDTO.getEmploymentStartDate()))
+            throw new FinishBeforeStartException("Finish date cannot be before start date");
         if (repository.findByEmail(newEmployeeDTO.getEmail()).orElse(null) != null)
             throw new EmailAlreadyTakenException("An employee with this email already exists");
         Employee employee = registrationDTOToModel(newEmployeeDTO);
@@ -124,6 +126,8 @@ public class EmployeeService implements UserDetailsService {
             employee.addRole(registrationDTO.getRole());
         employee.setDepartment(registrationDTO.getDepartment());
         employee.setSupervisor(repository.findById(registrationDTO.getSupervisorId()).orElse(null));
+        employee.setEmploymentStartDate(registrationDTO.getEmploymentStartDate());
+        employee.setEmploymentFinishDate(registrationDTO.getEmploymentFinishDate());
         return employee;
     }
     
@@ -140,6 +144,8 @@ public class EmployeeService implements UserDetailsService {
         employee.setWorkExperience(workExperienceService.dtoToModelAll(employeeDTO.getWorkExperience()));
         employee.setDepartment(employeeDTO.getDepartment());
         employee.setSupervisor(repository.findById(employeeDTO.getSupervisorId()).orElse(null));
+        employee.setEmploymentStartDate(employeeDTO.getEmploymentStartDate());
+        employee.setEmploymentFinishDate(employeeDTO.getEmploymentFinishDate());
         return employee;
     }
 
@@ -156,6 +162,8 @@ public class EmployeeService implements UserDetailsService {
         employeeDTO.setWorkExperience(workExperienceService.modelToDTOAll(employee.getWorkExperience()));
         employeeDTO.setDepartment(employee.getDepartment());
         employeeDTO.setSupervisorId(employee.getSupervisor() == null ? null : employee.getSupervisor().getId());
+        employeeDTO.setEmploymentStartDate(employee.getEmploymentStartDate());
+        employeeDTO.setEmploymentFinishDate(employee.getEmploymentFinishDate());
         return employeeDTO;
     }
 
