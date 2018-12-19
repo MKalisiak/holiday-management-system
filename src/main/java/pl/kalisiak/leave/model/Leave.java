@@ -22,6 +22,9 @@ public class Leave extends GenericModel {
 	
 	@NotNull
 	private LocalDate finishDate;
+
+	@NotNull
+	private int durationInMinutes;
 	
 	@ManyToOne
 	@JoinColumn(name = "employee_id")

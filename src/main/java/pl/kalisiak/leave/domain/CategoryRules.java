@@ -26,7 +26,7 @@ public class CategoryRules {
     private static final int UNIVERSITY_YEARS = 8;
 
     private static final int DAYS_PER_YEAR = 365;
-    private static final int HOURS_PER_DAY = 8;
+    public static final int HOURS_PER_DAY = 8;
 
     private static final int SENIORITY_YEARS_BETWEEN_CATEGORIES = 10;
     private static final int SENIORITY_DAYS_BETWEEN_CATEGORIES = SENIORITY_YEARS_BETWEEN_CATEGORIES * DAYS_PER_YEAR;
@@ -43,6 +43,14 @@ public class CategoryRules {
         daysForCategory.put(Category.SECOND, SECOND_CATEGORY_DAYS);
     }
     
+    public static Integer getLeaveDaysForCategory(Category category) {
+        return daysForCategory.get(category);
+    }
+
+    public static Integer getLeaveMinutesForCategory(Category category) {
+        return daysForCategory.get(category) * HOURS_PER_DAY * 60;
+    }
+
     private static final Map<EducationLevel, Integer> educationToSeniorityYears;
     static {
         educationToSeniorityYears = new EnumMap<>(EducationLevel.class);
@@ -129,9 +137,10 @@ public class CategoryRules {
     }
 
     private static LocalDate laterDate(LocalDate first, LocalDate second) {
-        if (first.isBefore(second))
-            return second;
-        else
+        if (first.isAfter(second))
             return first;
+        else
+            return second;
     }
+ 
 }
