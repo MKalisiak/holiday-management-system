@@ -12,9 +12,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-// TODO nie liczyc zachodzacych na siebie okresow podwojnie
-// TODO nie liczyc zachodzacej na siebie pracy i nauki
-
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
