@@ -12,19 +12,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-// TODO dont let leaves overlap
-// TODO dont let leaves start before employment start date
-
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Leave extends GenericModel {
+public class Correction extends GenericModel {
 
 	@NotNull
-	private LocalDate startDate;
-	
-	@NotNull
-	private LocalDate finishDate;
+	private int year;
 
 	@NotNull
 	private int durationInMinutes;

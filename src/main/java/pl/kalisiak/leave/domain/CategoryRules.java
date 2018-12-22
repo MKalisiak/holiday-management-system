@@ -90,12 +90,12 @@ public class CategoryRules {
             		(lastDateAnalyzed.isBefore(educationPeriod.getEndDate()) || lastDateAnalyzed.isEqual(educationPeriod.getEndDate())) && 
             		workPeriod.getEndDate().isAfter(educationPeriod.getStartDate())) {
                 if (workPeriod.getStartDate().isBefore(educationPeriod.getStartDate())) {
-                    totalDaysWorked += ChronoUnit.DAYS.between(laterDate(lastDateAnalyzed, workPeriod.getStartDate()), educationPeriod.getStartDate());
+                    totalDaysWorked += ChronoUnit.DAYS.between(DateUtils.laterDate(lastDateAnalyzed, workPeriod.getStartDate()), educationPeriod.getStartDate());
                 }
                 totalDaysWorked += educationToSeniorityYears.get(education.getLevel()) * DAYS_PER_YEAR;
                 lastDateAnalyzed = educationPeriod.getEndDate();
             }
-            totalDaysWorked += ChronoUnit.DAYS.between(laterDate(lastDateAnalyzed, workPeriod.getStartDate()), workPeriod.getEndDate());
+            totalDaysWorked += ChronoUnit.DAYS.between(DateUtils.laterDate(lastDateAnalyzed, workPeriod.getStartDate()), workPeriod.getEndDate());
             lastDateAnalyzed = workPeriod.getEndDate();
 
             if (totalDaysWorked >= SENIORITY_DAYS_BETWEEN_CATEGORIES)
@@ -136,11 +136,5 @@ public class CategoryRules {
             return periodsWorked.get(0).getStartDate();
     }
 
-    private static LocalDate laterDate(LocalDate first, LocalDate second) {
-        if (first.isAfter(second))
-            return first;
-        else
-            return second;
-    }
  
 }
