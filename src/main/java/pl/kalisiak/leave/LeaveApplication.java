@@ -46,17 +46,17 @@ public class LeaveApplication implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		EmployeeRegistrationDTO grzesiek = new EmployeeRegistrationDTO();
-		grzesiek.setFirstname("grzesiek");
-		grzesiek.setLastname("sowa");
-		grzesiek.setEmail("G.Sowa@pwpw.pl");
-		grzesiek.setPassword("test");
-		grzesiek.setRole(Role.CEO);
-		grzesiek.setDepartment(Department.ADMINISTRATION);
-		grzesiek.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
+		EmployeeRegistrationDTO michal = new EmployeeRegistrationDTO();
+		michal.setFirstname("Michał");
+		michal.setLastname("Kalisiak");
+		michal.setEmail("blackraider77@gmail.com");
+		michal.setPassword("test");
+		michal.setRole(Role.CEO);
+		michal.setDepartment(Department.ADMINISTRATION);
+		michal.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
 
 		try {
-			service.register(grzesiek);
+			service.register(michal);
 		} catch (EmailAlreadyTakenException e) {
 			logger.severe(e.getMessage());
 			return;
@@ -65,7 +65,7 @@ public class LeaveApplication implements ApplicationRunner {
 			return;
 		}
 
-		logger.info(grzesiek.toString());
+		logger.info(michal.toString());
 
 		Education education = new Education();
 		education.setSchoolName("PW");
@@ -78,60 +78,26 @@ public class LeaveApplication implements ApplicationRunner {
 		experience.setStartDate(LocalDate.of(2018, 6, 15));
 		experience.setFinishDate(LocalDate.now());
 
-		Employee grzesiekE = repo.findByEmail("G.Sowa@pwpw.pl").orElse(null);
-		grzesiekE.addWorkExperience(experience);
-		grzesiekE.setEducation(education);
+		Employee michalE = repo.findByEmail("blackraider77@gmail.com").orElse(null);
+		michalE.addWorkExperience(experience);
+		michalE.setEducation(education);
 
 		logger.info(experience.toString());
-		logger.info(grzesiekE.toString());
+		logger.info(michalE.toString());
 
-		repo.save(grzesiekE);
+		repo.save(michalE);
 		
-		logger.info(grzesiekE.toString());
+		logger.info(michalE.toString());
 		
-		EmployeeRegistrationDTO seba = new EmployeeRegistrationDTO();
-		seba.setFirstname("seba");
-		seba.setLastname("druć");
-		seba.setEmail("S.Druc@pwpw.pl");
-		seba.setPassword("test");
-		seba.setRole(Role.HR);
-		seba.setDepartment(Department.IT);
-		seba.setSupervisorId(service.findByEmail("G.Sowa@pwpw.pl").getId());
-		seba.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
-		seba.setEmploymentFinishDate(LocalDate.of(2019, Month.JULY, 16));
-
-		try {
-			service.register(seba);
-		} catch (EmailAlreadyTakenException e) {
-			logger.severe(e.getMessage());
-			return;
-		} catch (SupervisorMissingException e) {
-			logger.severe(e.getMessage());
-			return;
-		}
-
-		logger.info(seba.toString());
-		Employee sebaE = repo.findByEmail("S.Druc@pwpw.pl").orElse(null);
-		logger.info(sebaE.toString());
-		Employee sebaSupervisor = sebaE.getSupervisor();
-		logger.info(sebaSupervisor.toString());
-
-		Set<EmployeeDTO> supervisedByGrzesiek = service.findAllBySupervisorId(grzesiekE.getId());
-		logger.info(supervisedByGrzesiek.toString());
-		Set<EmployeeDTO> supervisedBySeba = service.findAllBySupervisorId(sebaE.getId());
-		logger.info(supervisedBySeba.toString());
-
 		WorkExperience experience2 = new WorkExperience();
 		experience2.setCompanyName("firma");
 		experience2.setStartDate(LocalDate.of(2018, 12, 1));
 		experience2.setFinishDate(LocalDate.now());
 
-		grzesiekE = repo.findByEmail("G.Sowa@pwpw.pl").orElse(null);
-		grzesiekE.addWorkExperience(experience2);
+		michalE = repo.findByEmail("blackraider77@gmail.com").orElse(null);
+		michalE.addWorkExperience(experience2);
 
-		grzesiekE = repo.save(grzesiekE);
-
-		logger.info(grzesiekE.toString());
+		michalE = repo.save(michalE);
 
 		WorkExperienceDTO exDTO = new WorkExperienceDTO();
 		exDTO.setCompanyName("polska wytwornia poapierow wartosciowych");
@@ -140,11 +106,11 @@ public class LeaveApplication implements ApplicationRunner {
 		exDTO.setEmployeeId(new Long(1));
 		WorkExperience experience3 = workExperienceService.dtoToModel(exDTO);
 
-		grzesiekE = repo.findById(experience3.getEmployee().getId()).orElse(null);
-		grzesiekE.addWorkExperience(experience3);
+		michalE = repo.findById(experience3.getEmployee().getId()).orElse(null);
+		michalE.addWorkExperience(experience3);
 
-		grzesiekE = repo.save(grzesiekE);
+		michalE = repo.save(michalE);
 
-		logger.info(grzesiekE.toString());
+		logger.info(michalE.toString());
 	}
 }

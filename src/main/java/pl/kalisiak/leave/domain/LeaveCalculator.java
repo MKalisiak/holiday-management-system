@@ -30,7 +30,15 @@ public class LeaveCalculator {
     @Autowired
     private CorrectionRepository correctionRepository;
 
-    public int getMinutesLeftForEmployeeOnDate(Employee employee, LocalDate date) {
+    public boolean canTakeLeave(Leave leave) {
+        int minutes = getMinutesLeftForEmployeeOnDate(leave.getEmployee(), leave.getStartDate()).stream().collect(Collectors.summingInt(Integer::intValue));
+        if (minutes >= leave.getDurationInMinutes())
+            return true;
+        else
+            return false;
+    }
+
+    public List<Integer> getMinutesLeftForEmployeeOnDate(Employee employee, LocalDate date) {
         LinkedList<Integer> minutesForYears = new LinkedList<>();
 
         LocalDate categoryChangeDate = CategoryRules.getCategoryChangeDate(employee);
@@ -50,7 +58,7 @@ public class LeaveCalculator {
                 updateYearsList(minutesForYears, leaves, corrections, year, employee.getEmploymentStartDate(), categoryChangeDate, date);
         }
 
-        return minutesForYears.stream().collect(Collectors.summingInt(Integer::intValue));
+        return minutesForYears;
     }
 
     private void updateYearsList(LinkedList<Integer> minutesForYears, List<Leave> leaves, List<Correction> corrections, int year, LocalDate employmentStartDate, LocalDate categoryChangeDate, LocalDate endDate) {
