@@ -1,6 +1,7 @@
 package pl.kalisiak.leave.controller;
 
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +16,7 @@ import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
 import pl.kalisiak.leave.exceptions.FinishBeforeStartException;
 import pl.kalisiak.leave.exceptions.NoSuchEmployeeException;
+import pl.kalisiak.leave.exceptions.SupervisorMissingException;
 import pl.kalisiak.leave.service.EmployeeService;
 
 @Controller
@@ -38,6 +40,26 @@ public class ProfileController {
 		}
 		request.setAttribute("user", employeeDTO);
 		return "profile";
+	}
+
+	@GetMapping({ "/profile/edit", "/profile/{id}/edit"})
+	public String getProfileEdit(@PathVariable Optional<Long> id, HttpServletRequest request) {
+		EmployeeDTO employeeDTO;
+		try {
+			if (id.isPresent()) {
+				employeeDTO = employeeService.findById(id.get());
+			} else {
+				String email = request.getUserPrincipal().getName();
+				employeeDTO = employeeService.findByEmail(email);
+			}
+		} catch (NoSuchEmployeeException e) {
+			return "404";
+		}
+		Set<EmployeeDTO> employees = employeeService.findAll();
+		employees.remove(employeeDTO);
+		request.setAttribute("potentialSupervisors", employees);
+		request.setAttribute("user", employeeDTO);
+		return "profile-edit";
 	}
 
 	@GetMapping({ "/profile/add-education", "/profile/{id}/add-education"})
@@ -114,6 +136,32 @@ public class ProfileController {
 			request.setAttribute("dateOrderError", true);
 			request.setAttribute("user", employeeDTO);
 			return "add-experience";
+		}
+		
+		request.setAttribute("user", employeeDTO);
+		return "redirect:/profile/" + employeeDTO.getId();
+	}
+
+	@PostMapping({ "/profile/edit", "/profile/{userId}/edit"})
+	public String editEmployee(@PathVariable Optional<Long> userId, HttpServletRequest request, EmployeeDTO employeeDTO) {
+		try {
+			employeeDTO = employeeService.updateEmployee(employeeDTO);
+		} catch (NoSuchEmployeeException e) {
+			return "404";
+		} catch (FinishBeforeStartException e) {
+			request.setAttribute("dateOrderError", true);
+			request.setAttribute("user", employeeDTO);
+			Set<EmployeeDTO> employees = employeeService.findAll();
+			employees.remove(employeeDTO);
+			request.setAttribute("potentialSupervisors", employees);
+			return "profile-edit";
+		} catch (SupervisorMissingException e) {
+			request.setAttribute("supervisorMissing", true);
+			request.setAttribute("user", employeeDTO);
+			Set<EmployeeDTO> employees = employeeService.findAll();
+			employees.remove(employeeDTO);
+			request.setAttribute("potentialSupervisors", employees);
+			return "profile-edit";
 		}
 		
 		request.setAttribute("user", employeeDTO);

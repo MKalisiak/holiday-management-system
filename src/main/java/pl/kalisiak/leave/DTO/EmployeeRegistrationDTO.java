@@ -1,6 +1,7 @@
 package pl.kalisiak.leave.DTO;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -32,7 +33,7 @@ public class EmployeeRegistrationDTO extends GenericDTO {
 	private String password;
 	
 	@NotNull
-	private Role role;
+	private Set<Role> roles;
 
 	@NotNull
 	private Department department;

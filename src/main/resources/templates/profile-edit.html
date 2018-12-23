@@ -13,51 +13,43 @@
 </head>
 
 <body>
-    <nav th:replace="components/navbar::navbar('register')"></nav>
+    <nav th:replace="components/navbar::navbar(null)"></nav>
     <div class="row">
         <div class="container">
-            <h1 th:text="#{register.title}"></h1>
-            <form class="col s12" th:action="@{/register}" method="post">
+            <h1 th:text="#{profile.edit.title}"></h1>
+            <form class="col s12" th:action="@{__${#httpServletRequest.requestURI}__}" method="post">
                 <div class="row">
                     <div class="input-field col s6">
-                        <input id="first_name" type="text" name="firstname" class="validate" required>
+                        <input id="first_name" type="text" name="firstname" class="validate" required th:value="${user.firstname}">
                         <label for="first_name" th:text="#{register.firstname}"></label>
                     </div>
                     <div class="input-field col s6">
-                        <input id="last_name" type="text" name="lastname" class="validate" required>
+                        <input id="last_name" type="text" name="lastname" class="validate" required th:value="${user.lastname}">
                         <label for="last_name" th:text="#{register.lastname}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="password" type="password" name="password" class="validate" required>
-                        <label for="password" th:text="#{register.password}"></label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input id="email" type="email" name="email" class="validate" required>
+                        <input id="email" type="email" name="email" class="validate" required th:value="${user.email}">
                         <label for="email" th:text="#{register.email}"></label>
                     </div>
                 </div>
                 <div class="input-field col s12">
                     <select name="roles" required multiple>
-                        <option value="" disabled selected th:text="#{register.role}"></option>
-                        <option value="EMPLOYEE" th:text="#{role.employee}"></option>
-                        <option value="HR" th:text="#{role.hr}"></option>
-                        <option value="MANAGEMENT" th:text="#{role.management}"></option>
-                        <option value="CEO" th:text="#{role.ceo}"></option>
+                        <option value="EMPLOYEE" th:text="#{role.employee}" th:selected="${user.roles.contains('EMPLOYEE')}"></option>
+                        <option value="HR" th:text="#{role.hr}" th:selected="${user.roles.contains('HR')}"></option>
+                        <option value="MANAGEMENT" th:text="#{role.management}" th:selected="${user.roles.contains('MANAGEMENT')}"></option>
+                        <option value="CEO" th:text="#{role.ceo}" th:selected="${user.roles.contains('CEO')}"></option>
                     </select>
                     <label th:text="#{register.role}"></label>
                 </div>
                 <div class="input-field col s12">
                     <select name="department" required>
-                        <option value="" disabled selected th:text="#{register.department}"></option>
-                        <option value="IT" th:text="#{department.it}"></option>
-                        <option value="HR" th:text="#{department.hr}"></option>
-                        <option value="SALES" th:text="#{department.sales}"></option>
-                        <option value="ADMINISTRATION" th:text="#{department.administration}"></option>
-                        <option value="PRODUCTION" th:text="#{department.production}"></option>
+                        <option value="IT" th:text="#{department.it}" th:selected="(${user.department} == 'IT')"></option>
+                        <option value="HR" th:text="#{department.hr}" th:selected="(${user.department} == 'HR')"></option>
+                        <option value="SALES" th:text="#{department.sales}" th:selected="(${user.department} == 'SALES')"></option>
+                        <option value="ADMINISTRATION" th:text="#{department.administration}" th:selected="(${user.department} == 'ADMINISTRATION')"></option>
+                        <option value="PRODUCTION" th:text="#{department.production}" th:selected="(${user.department} == 'PRODUCTION')"></option>
                     </select>
                     <label th:text="#{register.department}"></label>
                 </div>
@@ -65,23 +57,27 @@
                     <div th:if="${supervisorMissing}" th:text="#{register.error.no-supervisor}"></div>
                     <select name="supervisorId">
                         <option value="" disabled selected th:text="#{register.supervisor}"></option>
-                        <option th:each="supervisor : ${potentialSupervisors}" th:value="${supervisor.id}" th:text="${supervisor.email + ' (' + supervisor.firstname + ' ' + supervisor.lastname + ')'}"></option>
+                        <option th:each="supervisor : ${potentialSupervisors}" 
+                                th:value="${supervisor.id}" 
+                                th:text="${supervisor.email + ' (' + supervisor.firstname + ' ' + supervisor.lastname + ')'}"
+                                th:selected="(${user.supervisorId} == ${supervisor.id})"></option>
                     </select>
                     <label th:text="#{register.supervisor}"></label>
                 </div>
                 <div class="row">
                     <div th:if="${dateOrderError}" th:text="#{register.error.date-order}"></div>
                     <div class="input-field col s12">
-                        <input id="start_date" type="date" name="employmentStartDate" class="validate" required>
+                        <input id="start_date" type="date" name="employmentStartDate" class="validate" required th:value="${user.employmentStartDate}">
                         <label for="start_date" th:text="#{register.start-date}"></label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="finish_date" type="date" name="employmentFinishDate" class="validate">
+                        <input id="finish_date" type="date" name="employmentFinishDate" class="validate" th:value="${user.employmentFinishDate}">
                         <label for="finish_date" th:text="#{register.finish-date}"></label>
                     </div>
                 </div>
+                <input type="hidden" name="id" th:value="${user.id}" />
                 <div class="row">
                     <div class="input-field col s12">
                         <button class="btn waves-effect waves-light" type="submit">

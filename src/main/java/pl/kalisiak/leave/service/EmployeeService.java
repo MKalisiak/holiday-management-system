@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import pl.kalisiak.leave.DTO.EducationDTO;
 import pl.kalisiak.leave.DTO.EmployeeDTO;
@@ -75,7 +76,7 @@ public class EmployeeService implements UserDetailsService {
         return modelToDTOAll(repository.findAll());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public EmployeeDTO register(EmployeeRegistrationDTO newEmployeeDTO) throws EmailAlreadyTakenException, SupervisorMissingException, FinishBeforeStartException {
         if (newEmployeeDTO.getEmploymentFinishDate() != null && newEmployeeDTO.getEmploymentFinishDate().isBefore(newEmployeeDTO.getEmploymentStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
@@ -90,7 +91,29 @@ public class EmployeeService implements UserDetailsService {
         return modelToDTO(employee);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO) throws NoSuchEmployeeException, FinishBeforeStartException, SupervisorMissingException {
+        if (employeeDTO.getEmploymentFinishDate() != null && employeeDTO.getEmploymentFinishDate().isBefore(employeeDTO.getEmploymentStartDate()))
+            throw new FinishBeforeStartException("Finish date cannot be before start date");
+        Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
+        if (employee == null)
+            throw new NoSuchEmployeeException("No employee with given id");
+        Employee supervisor = employeeDTO.getSupervisorId() != null ? repository.findById(employeeDTO.getSupervisorId()).orElse(null) : null;
+        if (!employeeDTO.getRoles().contains(Role.CEO) && supervisor == null)
+            throw new SupervisorMissingException("The employee was not assigned a supervisor");
+        employee.setFirstname(employeeDTO.getFirstname());
+        employee.setLastname(employeeDTO.getLastname());
+        employee.setEmail(employeeDTO.getEmail());
+        employee.setRoles(employeeDTO.getRoles());
+        employee.setDepartment(employeeDTO.getDepartment());
+        employee.setSupervisor(supervisor);
+        employee.setEmploymentStartDate(employeeDTO.getEmploymentStartDate());
+        employee.setEmploymentFinishDate(employeeDTO.getEmploymentFinishDate());
+        employee = repository.save(employee);
+        return modelToDTO(employee);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public EmployeeDTO addEducationToEmployee(EmployeeDTO employeeDTO, EducationDTO educationDTO) throws NoSuchEmployeeException, FinishBeforeStartException {
         if (educationDTO.getFinishDate().isBefore(educationDTO.getStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
@@ -103,7 +126,7 @@ public class EmployeeService implements UserDetailsService {
         return modelToDTO(employee);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public EmployeeDTO addExperienceToEmployee(EmployeeDTO employeeDTO, WorkExperienceDTO experienceDTO) throws NoSuchEmployeeException, FinishBeforeStartException {
         if (experienceDTO.getFinishDate().isBefore(experienceDTO.getStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
@@ -122,8 +145,7 @@ public class EmployeeService implements UserDetailsService {
         employee.setLastname(registrationDTO.getLastname());
         employee.setPassword(registrationDTO.getPassword());
         employee.setEmail(registrationDTO.getEmail());
-        if (registrationDTO.getRole() != null)
-            employee.addRole(registrationDTO.getRole());
+        employee.setRoles(registrationDTO.getRoles());
         employee.setDepartment(registrationDTO.getDepartment());
         employee.setSupervisor(repository.findById(registrationDTO.getSupervisorId()).orElse(null));
         employee.setEmploymentStartDate(registrationDTO.getEmploymentStartDate());

@@ -2,8 +2,9 @@ package pl.kalisiak.leave;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.logging.Logger;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -11,7 +12,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
@@ -51,7 +51,10 @@ public class LeaveApplication implements ApplicationRunner {
 		michal.setLastname("Kalisiak");
 		michal.setEmail("blackraider77@gmail.com");
 		michal.setPassword("test");
-		michal.setRole(Role.CEO);
+		Set<Role> roles = new HashSet<>();
+		roles.add(Role.CEO);
+		roles.add(Role.HR);
+		michal.setRoles(roles);
 		michal.setDepartment(Department.ADMINISTRATION);
 		michal.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
 
