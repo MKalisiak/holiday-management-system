@@ -2,6 +2,7 @@ package pl.kalisiak.leave.DTO;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -49,6 +50,8 @@ public class EmployeeDTO extends GenericDTO {
 
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate employmentFinishDate;
+
+	private List<LeaveForYearDTO> leavesForYears;
 	
 	public void setEducation(EducationDTO education) {
 		if (education != null) 

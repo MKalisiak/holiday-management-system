@@ -79,6 +79,7 @@ public class CategoryRules {
 
         Education education = employee.getEducation(); 
         PeriodOfTime educationPeriod = education != null ? new PeriodOfTime(education.getStartDate(), education.getFinishDate()) : null;
+        boolean educationCounted = false;
 
         LocalDate lastDateAnalyzed = getInitialDate(educationPeriod, periodsWorked, employee.getEmploymentStartDate());
 
@@ -88,12 +89,13 @@ public class CategoryRules {
 
             if (educationPeriod != null &&
             		(lastDateAnalyzed.isBefore(educationPeriod.getEndDate()) || lastDateAnalyzed.isEqual(educationPeriod.getEndDate())) && 
-            		workPeriod.getEndDate().isAfter(educationPeriod.getStartDate())) {
+            		workPeriod.getEndDate().isAfter(educationPeriod.getStartDate()) && !educationCounted) {
                 if (workPeriod.getStartDate().isBefore(educationPeriod.getStartDate())) {
                     totalDaysWorked += ChronoUnit.DAYS.between(DateUtils.laterDate(lastDateAnalyzed, workPeriod.getStartDate()), educationPeriod.getStartDate());
                 }
                 totalDaysWorked += educationToSeniorityYears.get(education.getLevel()) * DAYS_PER_YEAR;
                 lastDateAnalyzed = educationPeriod.getEndDate();
+                educationCounted = true;
             }
             totalDaysWorked += ChronoUnit.DAYS.between(DateUtils.laterDate(lastDateAnalyzed, workPeriod.getStartDate()), workPeriod.getEndDate());
             lastDateAnalyzed = workPeriod.getEndDate();
@@ -104,8 +106,8 @@ public class CategoryRules {
 
         // education was not analyzed and still not enough days worked
         if (educationPeriod != null && 
-        		(lastDateAnalyzed.isBefore(educationPeriod.getStartDate()) || lastDateAnalyzed.isEqual(educationPeriod.getStartDate())) &&
-        		totalDaysWorked < SENIORITY_DAYS_BETWEEN_CATEGORIES) {
+                (lastDateAnalyzed.isBefore(educationPeriod.getStartDate()) || lastDateAnalyzed.isEqual(educationPeriod.getStartDate())) &&
+                !educationCounted && totalDaysWorked < SENIORITY_DAYS_BETWEEN_CATEGORIES) {
         	totalDaysWorked += educationToSeniorityYears.get(education.getLevel()) * DAYS_PER_YEAR;
         	lastDateAnalyzed = educationPeriod.getEndDate();
         }

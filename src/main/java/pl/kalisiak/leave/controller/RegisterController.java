@@ -25,7 +25,7 @@ public class RegisterController {
 
 	@GetMapping("/register")
 	public String getRegister(HttpServletRequest request) {
-		Set<EmployeeDTO> employees = employeeService.findAll();
+		Set<EmployeeDTO> employees = employeeService.findAll(false);
 		request.setAttribute("potentialSupervisors", employees);
 		return "register-employee";
 	}
@@ -34,7 +34,7 @@ public class RegisterController {
 	public String registerEmployee(HttpServletRequest request, EmployeeRegistrationDTO registrationDTO) {
 		EmployeeDTO employeeDTO;
 		try {
-			employeeDTO = employeeService.register(registrationDTO);
+			employeeDTO = employeeService.register(registrationDTO, false);
 		} catch (EmailAlreadyTakenException e) {
 			request.setAttribute("emailTaken", true);
 			return "register-employee";

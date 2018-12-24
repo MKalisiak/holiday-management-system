@@ -28,17 +28,22 @@ public class ProfileController {
 	@GetMapping({ "/profile", "/profile/{id}"})
 	public String getProfile(@PathVariable Optional<Long> id, HttpServletRequest request) {
 		EmployeeDTO employeeDTO;
+		EmployeeDTO supervisor = null;
 		try {
 			if (id.isPresent()) {
-				employeeDTO = employeeService.findById(id.get());
+				employeeDTO = employeeService.findById(id.get(), true);
 			} else {
 				String email = request.getUserPrincipal().getName();
-				employeeDTO = employeeService.findByEmail(email);
+				employeeDTO = employeeService.findByEmail(email, true);
+			}
+			if (employeeDTO.getSupervisorId() != null) {
+				supervisor = employeeService.findById(employeeDTO.getSupervisorId(), false);
 			}
 		} catch (NoSuchEmployeeException e) {
 			return "404";
 		}
 		request.setAttribute("user", employeeDTO);
+		request.setAttribute("supervisor", supervisor);
 		return "profile";
 	}
 
@@ -47,15 +52,15 @@ public class ProfileController {
 		EmployeeDTO employeeDTO;
 		try {
 			if (id.isPresent()) {
-				employeeDTO = employeeService.findById(id.get());
+				employeeDTO = employeeService.findById(id.get(), false);
 			} else {
 				String email = request.getUserPrincipal().getName();
-				employeeDTO = employeeService.findByEmail(email);
+				employeeDTO = employeeService.findByEmail(email, false);
 			}
 		} catch (NoSuchEmployeeException e) {
 			return "404";
 		}
-		Set<EmployeeDTO> employees = employeeService.findAll();
+		Set<EmployeeDTO> employees = employeeService.findAll(false);
 		employees.remove(employeeDTO);
 		request.setAttribute("potentialSupervisors", employees);
 		request.setAttribute("user", employeeDTO);
@@ -67,10 +72,10 @@ public class ProfileController {
 		EmployeeDTO employeeDTO;
 		try {
 			if (id.isPresent()) {
-				employeeDTO = employeeService.findById(id.get());
+				employeeDTO = employeeService.findById(id.get(), false);
 			} else {
 				String email = request.getUserPrincipal().getName();
-				employeeDTO = employeeService.findByEmail(email);
+				employeeDTO = employeeService.findByEmail(email, false);
 			}
 		} catch (NoSuchEmployeeException e) {
 			return "404";
@@ -84,10 +89,10 @@ public class ProfileController {
 		EmployeeDTO employeeDTO;
 		try {
 			if (id.isPresent()) {
-				employeeDTO = employeeService.findById(id.get());
+				employeeDTO = employeeService.findById(id.get(), false);
 			} else {
 				String email = request.getUserPrincipal().getName();
-				employeeDTO = employeeService.findByEmail(email);
+				employeeDTO = employeeService.findByEmail(email, false);
 			}
 		} catch (NoSuchEmployeeException e) {
 			return "404";
@@ -101,12 +106,12 @@ public class ProfileController {
 		EmployeeDTO employeeDTO = null;
 		try {
 			if (userId.isPresent()) {
-				employeeDTO = employeeService.findById(userId.get());
+				employeeDTO = employeeService.findById(userId.get(), false);
 			} else {
 				String email = request.getUserPrincipal().getName();
-				employeeDTO = employeeService.findByEmail(email);
+				employeeDTO = employeeService.findByEmail(email, false);
 			}
-			employeeDTO = employeeService.addEducationToEmployee(employeeDTO, educationDTO);
+			employeeDTO = employeeService.addEducationToEmployee(employeeDTO, educationDTO, false);
 		} catch (NoSuchEmployeeException e) {
 			return "404";
 		}catch (FinishBeforeStartException e) {
@@ -115,7 +120,6 @@ public class ProfileController {
 			return "add-education";
 		}
 		
-		request.setAttribute("user", employeeDTO);
 		return "redirect:/profile/" + employeeDTO.getId();
 	}
 
@@ -124,12 +128,12 @@ public class ProfileController {
 		EmployeeDTO employeeDTO = null;
 		try {
 			if (userId.isPresent()) {
-				employeeDTO = employeeService.findById(userId.get());
+				employeeDTO = employeeService.findById(userId.get(), false);
 			} else {
 				String email = request.getUserPrincipal().getName();
-				employeeDTO = employeeService.findByEmail(email);
+				employeeDTO = employeeService.findByEmail(email, false);
 			}
-			employeeDTO = employeeService.addExperienceToEmployee(employeeDTO, experienceDTO);
+			employeeDTO = employeeService.addExperienceToEmployee(employeeDTO, experienceDTO, false);
 		} catch (NoSuchEmployeeException e) {
 			return "404";
 		} catch (FinishBeforeStartException e) {
@@ -138,33 +142,31 @@ public class ProfileController {
 			return "add-experience";
 		}
 		
-		request.setAttribute("user", employeeDTO);
 		return "redirect:/profile/" + employeeDTO.getId();
 	}
 
 	@PostMapping({ "/profile/edit", "/profile/{userId}/edit"})
 	public String editEmployee(@PathVariable Optional<Long> userId, HttpServletRequest request, EmployeeDTO employeeDTO) {
 		try {
-			employeeDTO = employeeService.updateEmployee(employeeDTO);
+			employeeDTO = employeeService.updateEmployee(employeeDTO, false);
 		} catch (NoSuchEmployeeException e) {
 			return "404";
 		} catch (FinishBeforeStartException e) {
 			request.setAttribute("dateOrderError", true);
 			request.setAttribute("user", employeeDTO);
-			Set<EmployeeDTO> employees = employeeService.findAll();
+			Set<EmployeeDTO> employees = employeeService.findAll(false);
 			employees.remove(employeeDTO);
 			request.setAttribute("potentialSupervisors", employees);
 			return "profile-edit";
 		} catch (SupervisorMissingException e) {
 			request.setAttribute("supervisorMissing", true);
 			request.setAttribute("user", employeeDTO);
-			Set<EmployeeDTO> employees = employeeService.findAll();
+			Set<EmployeeDTO> employees = employeeService.findAll(false);
 			employees.remove(employeeDTO);
 			request.setAttribute("potentialSupervisors", employees);
 			return "profile-edit";
 		}
 		
-		request.setAttribute("user", employeeDTO);
 		return "redirect:/profile/" + employeeDTO.getId();
 	}
 

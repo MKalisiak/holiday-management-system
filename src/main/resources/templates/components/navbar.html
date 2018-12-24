@@ -1,5 +1,5 @@
 <nav th:fragment="navbar (active)">
-    <div class="nav-wrapper">
+    <div class="nav-wrapper container">
         <ul class="left hide-on-med-and-down">
             <li th:classappend="${active == 'home'} ? active : ''"><a th:href="@{/}">Home</a></li>
             <li sec:authorize="hasRole('EMPLOYEE')" th:classappend="${active == 'user'} ? active : ''"><a th:href="@{/user}">User</a></li>

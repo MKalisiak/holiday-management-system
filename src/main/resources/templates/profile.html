@@ -9,7 +9,7 @@
 </head>
 <body>
     <nav th:replace="components/navbar::navbar('profile')"></nav>
-    <div>
+    <div class="container">
         <p th:text="${user.firstname}"></p>
         <p th:text="${user.lastname}"></p>
         <p th:text="${user.email}"></p>
@@ -17,11 +17,15 @@
         <p th:text="${user.education}"></p>
         <p th:text="${user.workExperience}"></p>
         <p th:text="${user.department}"></p>
-        <p th:text="${user.supervisorId}"></p>
+        <p th:if="${supervisor != null}" th:text="${supervisor.email + ' (' + supervisor.firstname + ' ' + supervisor.lastname + ')'}"></p>
         <p th:text="${user.employmentStartDate}"></p>
         <p th:text="${user.employmentFinishDate}"></p>
+        <ul th:if="${#authentication.name == user.email || #authorization.expression('hasRole(''HR'')') || #authorization.expression('hasRole(''MANAGEMENT'')') || #authorization.expression('hasRole(''CEO'')')}">
+            <li th:each="leave : ${user.leavesForYears}" th:text="${leave.year + ':' + leave.minutes/480 + 'd ' + leave.minutes%480/60 + 'g ' + leave.minutes%60 + 'min'}"></li>
+        </ul>
     </div>
-    <div sec:authorize="hasRole('HR')">
+    <div sec:authorize="hasRole('HR')"  class="container">
+        <a th:href="@{__${#httpServletRequest.requestURI}__/edit}" th:text="#{profile.edit}"></a>
         <a th:href="@{__${#httpServletRequest.requestURI}__/add-education}" th:text="#{profile.add-education}"></a>
         <a th:href="@{__${#httpServletRequest.requestURI}__/add-experience}" th:text="#{profile.add-experience}"></a>
     </div>

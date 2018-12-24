@@ -1,6 +1,9 @@
 package pl.kalisiak.leave.service;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -21,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.kalisiak.leave.DTO.EducationDTO;
 import pl.kalisiak.leave.DTO.EmployeeDTO;
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
+import pl.kalisiak.leave.DTO.LeaveForYearDTO;
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
+import pl.kalisiak.leave.domain.LeaveCalculator;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
 import pl.kalisiak.leave.exceptions.FinishBeforeStartException;
 import pl.kalisiak.leave.exceptions.NoSuchEmployeeException;
@@ -51,33 +56,36 @@ public class EmployeeService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public EmployeeDTO findById(Long id) throws NoSuchEmployeeException {
+    @Autowired
+    private LeaveCalculator leaveCalculator;
+
+    public EmployeeDTO findById(Long id, boolean calculateLeave) throws NoSuchEmployeeException {
         Employee employee = repository.findById(id).orElse(null);
         if (employee == null)
             throw new NoSuchEmployeeException("No employee with given id");
-        return modelToDTO(employee);
+        return modelToDTO(employee, calculateLeave);
     }
 
-    public EmployeeDTO findByEmail(String email) throws NoSuchEmployeeException {
+    public EmployeeDTO findByEmail(String email, boolean calculateLeave) throws NoSuchEmployeeException {
         Employee employee = repository.findByEmail(email).orElse(null);
         if (employee == null)
             throw new NoSuchEmployeeException("No employee with given email");
-        return modelToDTO(employee);
+        return modelToDTO(employee, calculateLeave);
     }
 
-    public Set<EmployeeDTO> findAllBySupervisorId(Long id) throws NoSuchEmployeeException {
+    public Set<EmployeeDTO> findAllBySupervisorId(Long id, boolean calculateLeave) throws NoSuchEmployeeException {
         Employee supervisor = repository.findById(id).orElse(null);
         if (supervisor == null)
             throw new NoSuchEmployeeException("No employee with given id");
-        return modelToDTOAll(repository.findAllBySupervisor(supervisor));
+        return modelToDTOAll(repository.findAllBySupervisor(supervisor), calculateLeave);
     }
 
-    public Set<EmployeeDTO> findAll() {
-        return modelToDTOAll(repository.findAll());
+    public Set<EmployeeDTO> findAll(boolean calculateLeave) {
+        return modelToDTOAll(repository.findAll(), calculateLeave);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public EmployeeDTO register(EmployeeRegistrationDTO newEmployeeDTO) throws EmailAlreadyTakenException, SupervisorMissingException, FinishBeforeStartException {
+    public EmployeeDTO register(EmployeeRegistrationDTO newEmployeeDTO, boolean calculateLeave) throws EmailAlreadyTakenException, SupervisorMissingException, FinishBeforeStartException {
         if (newEmployeeDTO.getEmploymentFinishDate() != null && newEmployeeDTO.getEmploymentFinishDate().isBefore(newEmployeeDTO.getEmploymentStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
         if (repository.findByEmail(newEmployeeDTO.getEmail()).orElse(null) != null)
@@ -88,11 +96,11 @@ public class EmployeeService implements UserDetailsService {
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employee.addRole(Role.EMPLOYEE);
         employee = repository.save(employee);
-        return modelToDTO(employee);
+        return modelToDTO(employee, calculateLeave);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO) throws NoSuchEmployeeException, FinishBeforeStartException, SupervisorMissingException {
+    public EmployeeDTO updateEmployee(EmployeeDTO employeeDTO, boolean calculateLeave) throws NoSuchEmployeeException, FinishBeforeStartException, SupervisorMissingException {
         if (employeeDTO.getEmploymentFinishDate() != null && employeeDTO.getEmploymentFinishDate().isBefore(employeeDTO.getEmploymentStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
         Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
@@ -110,11 +118,11 @@ public class EmployeeService implements UserDetailsService {
         employee.setEmploymentStartDate(employeeDTO.getEmploymentStartDate());
         employee.setEmploymentFinishDate(employeeDTO.getEmploymentFinishDate());
         employee = repository.save(employee);
-        return modelToDTO(employee);
+        return modelToDTO(employee, calculateLeave);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public EmployeeDTO addEducationToEmployee(EmployeeDTO employeeDTO, EducationDTO educationDTO) throws NoSuchEmployeeException, FinishBeforeStartException {
+    public EmployeeDTO addEducationToEmployee(EmployeeDTO employeeDTO, EducationDTO educationDTO, boolean calculateLeave) throws NoSuchEmployeeException, FinishBeforeStartException {
         if (educationDTO.getFinishDate().isBefore(educationDTO.getStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
         Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
@@ -123,11 +131,11 @@ public class EmployeeService implements UserDetailsService {
         Education education = educationService.dtoToModel(educationDTO);
         employee.setEducation(education);
         employee = repository.save(employee);
-        return modelToDTO(employee);
+        return modelToDTO(employee, calculateLeave);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public EmployeeDTO addExperienceToEmployee(EmployeeDTO employeeDTO, WorkExperienceDTO experienceDTO) throws NoSuchEmployeeException, FinishBeforeStartException {
+    public EmployeeDTO addExperienceToEmployee(EmployeeDTO employeeDTO, WorkExperienceDTO experienceDTO, boolean calculateLeave) throws NoSuchEmployeeException, FinishBeforeStartException {
         if (experienceDTO.getFinishDate().isBefore(experienceDTO.getStartDate()))
             throw new FinishBeforeStartException("Finish date cannot be before start date");
         Employee employee = repository.findById(employeeDTO.getId()).orElse(null);
@@ -136,7 +144,7 @@ public class EmployeeService implements UserDetailsService {
         WorkExperience experience = workExperienceService.dtoToModel(experienceDTO);
         employee.addWorkExperience(experience);
         employee = repository.save(employee);
-        return modelToDTO(employee);
+        return modelToDTO(employee, calculateLeave);
     }
 
     public Employee registrationDTOToModel(EmployeeRegistrationDTO registrationDTO) {
@@ -171,7 +179,7 @@ public class EmployeeService implements UserDetailsService {
         return employee;
     }
 
-    public EmployeeDTO modelToDTO(Employee employee) {
+    public EmployeeDTO modelToDTO(Employee employee, boolean calculateLeave) {
         if (employee == null)
             return null;
         EmployeeDTO employeeDTO = new EmployeeDTO();
@@ -186,6 +194,14 @@ public class EmployeeService implements UserDetailsService {
         employeeDTO.setSupervisorId(employee.getSupervisor() == null ? null : employee.getSupervisor().getId());
         employeeDTO.setEmploymentStartDate(employee.getEmploymentStartDate());
         employeeDTO.setEmploymentFinishDate(employee.getEmploymentFinishDate());
+        if (calculateLeave) {
+            List<LeaveForYearDTO> leavesForYears = new LinkedList<>();
+            List<Integer> calculatedMinutesForYears = leaveCalculator.getMinutesLeftForEmployeeOnDate(employee, LocalDate.now());
+            for (int i = 0, year = LocalDate.now().getYear() - calculatedMinutesForYears.size() + 1; i < calculatedMinutesForYears.size(); i++, year++) {
+                leavesForYears.add(new LeaveForYearDTO(year, calculatedMinutesForYears.get(i)));
+            }
+            employeeDTO.setLeavesForYears(leavesForYears);
+        }
         return employeeDTO;
     }
 
@@ -197,11 +213,11 @@ public class EmployeeService implements UserDetailsService {
             .collect(Collectors.toSet());
     }
 
-    public Set<EmployeeDTO> modelToDTOAll(Collection<Employee> employees) {
+    public Set<EmployeeDTO> modelToDTOAll(Collection<Employee> employees, boolean calculateLeave) {
         if (employees == null)
             return null;
         return employees.stream()
-            .map(employee -> modelToDTO(employee))
+            .map(employee -> modelToDTO(employee, calculateLeave))
             .collect(Collectors.toSet());
     }
 

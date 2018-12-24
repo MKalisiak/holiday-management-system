@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import pl.kalisiak.leave.DTO.EmployeeRegistrationDTO;
 import pl.kalisiak.leave.DTO.WorkExperienceDTO;
+import pl.kalisiak.leave.domain.CategoryRules;
+import pl.kalisiak.leave.domain.LeaveCalculator;
 import pl.kalisiak.leave.exceptions.EmailAlreadyTakenException;
 import pl.kalisiak.leave.exceptions.SupervisorMissingException;
 import pl.kalisiak.leave.model.Department;
@@ -44,6 +46,9 @@ public class LeaveApplication implements ApplicationRunner {
 	@Autowired
 	EmployeeRepository repo;
 
+	@Autowired
+	LeaveCalculator leaveCalculator;
+
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		EmployeeRegistrationDTO michal = new EmployeeRegistrationDTO();
@@ -56,10 +61,10 @@ public class LeaveApplication implements ApplicationRunner {
 		roles.add(Role.HR);
 		michal.setRoles(roles);
 		michal.setDepartment(Department.ADMINISTRATION);
-		michal.setEmploymentStartDate(LocalDate.of(2018, Month.JULY, 16));
+		michal.setEmploymentStartDate(LocalDate.of(2017, Month.JULY, 16));
 
 		try {
-			service.register(michal);
+			service.register(michal, false);
 		} catch (EmailAlreadyTakenException e) {
 			logger.severe(e.getMessage());
 			return;
@@ -115,5 +120,8 @@ public class LeaveApplication implements ApplicationRunner {
 		michalE = repo.save(michalE);
 
 		logger.info(michalE.toString());
+
+		logger.info(CategoryRules.getCategoryChangeDate(michalE).toString());
+		logger.info(leaveCalculator.getMinutesLeftForEmployeeOnDate(michalE, LocalDate.now()).toString());
 	}
 }
